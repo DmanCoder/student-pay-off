@@ -1,13 +1,103 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-// IMAGES
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+// STYLES
 import './css/style.scss';
 
+gsap.registerPlugin(ScrollTrigger);
+
 function App() {
+  // HEADER
+  let header = useRef(null);
+
+  // BANNER
+  let banner = useRef(null);
+  let bannerBgAddition = useRef(null);
+
+  // BANNER CONTENT
+  let h1LineArr = useRef([]);
+  let contentP = useRef(null);
+  let contentButton = useRef(null);
+  let playVideo = useRef(null);
+  let playVideoCover = useRef(null);
+
+  // IMAGE
+  let handImg = useRef(null);
+  let featureBanner = useRef(null);
+  let featureBannerGreen = useRef(null);
+
+  const bannerTL = gsap.timeline();
+
+  useEffect(() => {
+    bannerTL
+      .from([bannerBgAddition, banner], {
+        duration: 1.2,
+        width: 0,
+        skewX: 4,
+        ease: 'power3.inOut',
+        stagger: { amount: 0.2 },
+      })
+      .from(
+        header,
+        {
+          duration: 0.8,
+          opacity: 0,
+          y: 16,
+          ease: 'power3.inOut',
+        },
+        '-=.4'
+      )
+      .from(
+        h1LineArr.current,
+        {
+          duration: 0.8,
+          y: 80,
+          ease: 'power3.inOut',
+          stagger: { amount: 0.2 },
+        },
+        '-=.7'
+      )
+      .from(
+        [contentP, contentButton],
+        {
+          y: -40,
+          opacity: 0,
+          duration: 0.7,
+          ease: 'power3.inOut',
+          stagger: { amount: 0.2 },
+        },
+        '-=.6'
+      )
+      .to([playVideo, playVideoCover], { duration: 0, opacity: 1 }, '-=.6')
+      .to(
+        playVideoCover,
+        { height: 0, duration: 1, ease: 'power3.out' },
+        '-=0.6'
+      )
+      .from(
+        handImg,
+        { duration: 0.8, opacity: 0, ease: 'power3.out', x: -100, skewX: 2 },
+        '-=1'
+      )
+      .from(
+        [featureBanner, featureBannerGreen],
+        {
+          duration: 0.8,
+          opacity: 0,
+          ease: 'power3.out',
+          x: -60,
+          skewX: 6,
+          stagger: { amount: 0.3 },
+        },
+        '-=.8'
+      );
+  }, []);
+
   return (
     <div className="App">
-      <header id="header">
+      <header ref={(el) => (header = el)} id="header">
         <div className="container-fluid">
           <div className="row">
             <div className="header-inner">
@@ -47,8 +137,16 @@ function App() {
       </header>
 
       <section className="banner" id="banner">
-        <div id="bannerBgAddition" className="banner-addition-bg"></div>
-        <div id="bannerBg" className="banner-bg"></div>
+        <div
+          ref={(el) => (bannerBgAddition = el)}
+          id="bannerBgAddition"
+          className="banner-addition-bg"
+        ></div>
+        <div
+          ref={(el) => (banner = el)}
+          id="bannerBg"
+          className="banner-bg"
+        ></div>
         <div className="container">
           <div className="row">
             <div className="banner-inner" id="bannerInner">
@@ -56,23 +154,30 @@ function App() {
                 <div className="content-inner">
                   <h1>
                     <div className="line">
-                      <span>Helping student pay</span>
+                      <span ref={(el) => h1LineArr.current.push(el)}>
+                        Helping student pay
+                      </span>
                     </div>
                     <div className="line">
-                      <span>off their ridiculous debts</span>
+                      <span ref={(el) => h1LineArr.current.push(el)}>
+                        off their ridiculous debts
+                      </span>
                     </div>
                   </h1>
-                  <p>
+                  <p ref={(el) => (contentP = el)}>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit.
                     Quos sunt doloremque repellendus pariatur ad. Necessitatibus
                     beatae, alias assumenda.
                   </p>
-                  <div className="btn-row">
+                  <div ref={(el) => (contentButton = el)} className="btn-row">
                     <a href="/">Apply Today</a>
                   </div>
                   <div className="play-video">
-                    <div className="play-video cover"></div>
-                    <span>
+                    <div
+                      ref={(el) => (playVideoCover = el)}
+                      className="play-video cover"
+                    ></div>
+                    <span ref={(el) => (playVideo = el)}>
                       <img src={require('./images/play.svg')} alt="play icon" />
                       Watch Video
                     </span>
@@ -81,11 +186,23 @@ function App() {
               </div>
               <div className="image">
                 <div className="image-inner">
-                  <img src={require('./images/hand.webp')} alt="Hand" />
-                  <div className="feature-banner" id="featureBanner">
+                  <img
+                    ref={(el) => (handImg = el)}
+                    src={require('./images/hand.webp')}
+                    alt="Hand"
+                  />
+                  <div
+                    ref={(el) => (featureBanner = el)}
+                    className="feature-banner"
+                    id="featureBanner"
+                  >
                     0% Interest
                   </div>
-                  <div className="feature-banner green" id="featureBannerGreen">
+                  <div
+                    ref={(el) => (featureBannerGreen = el)}
+                    className="feature-banner green"
+                    id="featureBannerGreen"
+                  >
                     No Credit Checks
                   </div>
                 </div>
